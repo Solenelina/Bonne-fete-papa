@@ -264,7 +264,7 @@
       setInvite(this.invite);
       let h = VIDE;
       h += L(bon ? `<span class="c-vert">✔ BRAVO, bonne réponse !</span>`
-                 : `<span class="c-rouge">�’✗ Raté !</span>`);
+                 : `<span class="c-rouge">✗ Raté !</span>`);
       h += L(`<span class="c-jaune">Réponse : ${esc(q.options[q.bonne])}</span>`);
       h += VIDE + L(`<span class="c-vert">Score : ${this._score}/${this._i + 1}</span>`);
       h += VIDE + L(`<span class="c-cyan">→ Touche SUITE pour la suite.</span>`);
