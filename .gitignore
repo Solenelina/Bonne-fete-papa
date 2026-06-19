@@ -1,0 +1,14 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dossiers de build / déploiement local
+public/
+node_modules/
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*~

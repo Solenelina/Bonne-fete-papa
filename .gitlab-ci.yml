@@ -1,0 +1,14 @@
+# Déploiement automatique sur GitLab Pages.
+# Le site étant 100 % statique, on se contente de recopier les fichiers
+# dans le dossier "public/" attendu par GitLab Pages.
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp -r index.html css js images public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    # Ne publie que depuis la branche par défaut (main)
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
