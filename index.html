@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3615 PAPA — Minitel</title>
+  <meta name="description" content="3615 PAPA — un service Minitel reconstitué, cadeau de fête des pères.">
+
+  <!-- Police pixel d'époque -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/minitel.css">
+</head>
+<body>
+
+  <!-- =========================================================
+       LE BOÎTIER MINITEL (plastique beige)
+       ========================================================= -->
+  <main class="minitel" aria-label="Terminal Minitel 3615 PAPA">
+
+    <!-- En-tête du boîtier : marque + service -->
+    <div class="minitel__marque">
+      <span class="minitel__logo">Minitel</span>
+      <span class="minitel__service">3615 PAPA</span>
+    </div>
+
+    <!-- =======================================================
+         L'ÉCRAN (tube cathodique 4/3)
+         ======================================================= -->
+    <div class="ecran" id="ecran">
+      <!-- Contenu textuel du Minitel -->
+      <div class="ecran__contenu" id="contenu">
+        <!-- Barre de titre en vidéo inversée -->
+        <div class="barre-titre" id="barre-titre">3615 PAPA</div>
+
+        <!-- Zone principale (texte des rubriques) -->
+        <div class="zone" id="zone" role="region" aria-live="polite" aria-label="Écran Minitel"></div>
+
+        <!-- Ligne de saisie / statut, en bas -->
+        <div class="barre-statut" id="barre-statut">
+          <span class="saisie" id="saisie"></span><span class="curseur" id="curseur">&#9608;</span>
+        </div>
+      </div>
+
+      <!-- Calques d'effet CRT (purement décoratifs) -->
+      <div class="crt-scanlines" aria-hidden="true"></div>
+      <div class="crt-vignette" aria-hidden="true"></div>
+      <div class="crt-glow" aria-hidden="true"></div>
+
+      <!-- Écran d'accueil : invite à se connecter (audio après clic) -->
+      <button class="ecran__demarrage" id="demarrage" type="button">
+        <span class="ecran__demarrage-titre">3615 PAPA</span>
+        <span class="ecran__demarrage-action">▶ APPUYEZ POUR VOUS CONNECTER</span>
+        <span class="ecran__demarrage-note">(son du modem activé après ce clic)</span>
+      </button>
+    </div>
+
+    <!-- =======================================================
+         LE CLAVIER (touches beige cliquables)
+         ======================================================= -->
+    <div class="clavier">
+
+      <!-- Touches de fonction Minitel -->
+      <div class="touches-fonction" id="touches-fonction" role="group" aria-label="Touches de fonction Minitel">
+        <button class="touche" data-action="sommaire" type="button">Sommaire</button>
+        <button class="touche" data-action="retour" type="button">Retour</button>
+        <button class="touche" data-action="suite" type="button">Suite</button>
+        <button class="touche" data-action="annulation" type="button">Annulation</button>
+        <button class="touche touche--envoi" data-action="envoi" type="button">Envoi</button>
+      </div>
+
+      <!-- Pavé numérique + lettres (surtout utile sur téléphone) -->
+      <div class="pave" id="pave" role="group" aria-label="Pavé de saisie">
+        <div class="pave__num" id="pave-num"></div>
+        <!-- Le clavier de lettres n'apparaît que pour le jeu du Pendu -->
+        <div class="pave__lettres" id="pave-lettres" hidden></div>
+      </div>
+    </div>
+
+    <p class="aide-clavier" id="aide-clavier">
+      Tapez un numéro puis <strong>Envoi</strong> (touche Entrée). Sur ordinateur, le clavier physique fonctionne aussi.
+    </p>
+  </main>
+
+  <!-- Scripts (vanilla JS, sans framework) -->
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+/* =====================================================================
+   3615 PAPA — Feuille de style "Minitel"
+   Esthétique : boîtier beige, écran cathodique 4/3, police pixel,
+   palette limitée (blanc, cyan, jaune, vert), vidéo inversée.
+   ===================================================================== */
+
+/* ------------------------- Variables ------------------------------- */
+:root {
+  /* Palette Minitel (couleurs vives) */
+  --noir:   #000000;
+  --blanc:  #f4f4f4;
+  --cyan:   #00e5e5;
+  --jaune:  #f5e000;
+  --vert:   #28e020;
+  --rouge:  #ff2b2b;
+
+  /* Plastique du boîtier */
+  --beige:        #cdc1a5;
+  --beige-clair:  #ded3ba;
+  --beige-fonce:  #a89c80;
+  --beige-touche: #d9cfb6;
+
+  /* Réglages écran */
+  --halo: 0 0 1px currentColor, 0 0 6px currentColor;
+}
+
+/* ------------------------- Base ------------------------------------ */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #15140f radial-gradient(circle at 50% 30%, #2a2820, #0a0a07 75%);
+  min-height: 100%;
+  color: var(--blanc);
+  font-family: "VT323", "Courier New", monospace;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 12px 48px;
+}
+
+/* ------------------------- Le boîtier ------------------------------ */
+.minitel {
+  width: 100%;
+  max-width: 640px;
+  background: linear-gradient(165deg, var(--beige-clair), var(--beige) 45%, var(--beige-fonce));
+  border-radius: 22px 22px 28px 28px;
+  padding: 18px 20px 22px;
+  box-shadow:
+    0 2px 0 #fff6 inset,
+    0 -8px 24px #0004 inset,
+    0 22px 50px #000a,
+    0 2px 6px #0006;
+  border: 1px solid #00000022;
+}
+
+.minitel__marque {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 6px 12px;
+}
+.minitel__logo {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.5px;
+  font-size: clamp(20px, 5vw, 30px);
+  color: #2b2b2b;
+  text-shadow: 0 1px 0 #ffffff80;
+}
+.minitel__service {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  font-size: clamp(13px, 3.4vw, 18px);
+  color: #5a3b1a;
+  letter-spacing: 2px;
+  background: #00000010;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ------------------------- L'écran (CRT) --------------------------- */
+.ecran {
+  position: relative;
+  aspect-ratio: 4 / 3;            /* format Minitel 4/3 */
+  background: #050505;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 10px solid #1a1813;
+  box-shadow:
+    0 0 0 2px #00000060,
+    0 6px 18px #000a inset;
+}
+
+.ecran__contenu {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px 8px;
+  font-size: clamp(16px, 4.4vw, 26px);
+  line-height: 1.18;
+  color: var(--blanc);
+  text-shadow: var(--halo);
+  z-index: 2;
+}
+
+/* Barre de titre en vidéo inversée (fond cyan, texte noir) */
+.barre-titre {
+  flex: 0 0 auto;
+  background: var(--cyan);
+  color: var(--noir);
+  text-shadow: none;
+  padding: 1px 8px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 6px;
+}
+
+/* Zone de texte principale */
+.zone {
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.zone .ligne { display: block; min-height: 1.18em; }
+
+/* Barre de statut / ligne de saisie en bas */
+.barre-statut {
+  flex: 0 0 auto;
+  margin-top: 6px;
+  min-height: 1.2em;
+  color: var(--vert);
+}
+.saisie { color: var(--jaune); }
+
+/* Curseur bloc clignotant */
+.curseur {
+  display: inline-block;
+  color: var(--blanc);
+  animation: clignote 1s steps(1) infinite;
+}
+@keyframes clignote { 50% { opacity: 0; } }
+
+/* --------- Classes de couleur / mise en forme du contenu ---------- */
+.c-cyan   { color: var(--cyan); }
+.c-jaune  { color: var(--jaune); }
+.c-vert   { color: var(--vert); }
+.c-blanc  { color: var(--blanc); }
+.c-rouge  { color: var(--rouge); }
+.inv      { background: var(--cyan); color: var(--noir); text-shadow: none; padding: 0 4px; }
+.inv-jaune{ background: var(--jaune); color: var(--noir); text-shadow: none; padding: 0 4px; }
+.gras     { font-weight: 400; filter: brightness(1.15); }
+.menu-num { color: var(--jaune); }
+.menu-item{ color: var(--cyan); }
+.centre   { text-align: center; display: block; }
+
+/* ------------------------- Effets CRT ------------------------------ */
+.crt-scanlines, .crt-vignette, .crt-glow {
+  position: absolute; inset: 0; pointer-events: none; z-index: 3;
+}
+.crt-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.16) 3px,
+    rgba(0,0,0,0.16) 4px
+  );
+  animation: defilement 8s linear infinite;
+}
+@keyframes defilement { from { background-position-y: 0; } to { background-position-y: 100px; } }
+.crt-vignette {
+  background: radial-gradient(120% 120% at 50% 50%, transparent 60%, #000a 100%);
+}
+.crt-glow {
+  box-shadow: 0 0 60px #0affe520 inset;
+  background: radial-gradient(80% 60% at 50% 40%, #19ffe008, transparent 70%);
+}
+
+/* ------------------------- Écran de démarrage ---------------------- */
+.ecran__demarrage {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; gap: 14px;
+  align-items: center; justify-content: center;
+  background: #020202;
+  border: 0; cursor: pointer;
+  color: var(--cyan);
+  font-family: inherit;
+  text-shadow: var(--halo);
+}
+.ecran__demarrage-titre  { font-size: clamp(30px, 9vw, 56px); color: var(--jaune); letter-spacing: 3px; }
+.ecran__demarrage-action { font-size: clamp(16px, 4.4vw, 24px); color: var(--vert); animation: clignote 1.2s steps(1) infinite; }
+.ecran__demarrage-note   { font-size: clamp(12px, 3.2vw, 16px); color: #6fe; opacity: .7; }
+.ecran__demarrage[hidden] { display: none; }
+
+/* ------------------------- Le clavier ------------------------------ */
+.clavier { margin-top: 16px; }
+
+.touches-fonction {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.touche {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(11px, 2.8vw, 14px);
+  font-weight: 600;
+  color: #3a3326;
+  background: linear-gradient(180deg, #efe7d2, var(--beige-touche) 60%, #b9ad90);
+  border: 1px solid #00000030;
+  border-radius: 7px;
+  padding: 9px 12px;
+  cursor: pointer;
+  box-shadow: 0 1px 0 #fff8 inset, 0 2px 3px #0004;
+  flex: 1 1 auto;
+  min-width: 70px;
+  transition: transform .05s ease;
+}
+.touche:hover { filter: brightness(1.04); }
+.touche:active { transform: translateY(1px); box-shadow: 0 1px 2px #0006 inset; }
+.touche--envoi { color: var(--rouge); font-weight: 800; }
+.touche:focus-visible { outline: 3px solid #2b7bff; outline-offset: 2px; }
+
+/* Pavé numérique + lettres */
+.pave { margin-top: 12px; }
+.pave__num {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+.pave__lettres {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin: 12px auto 0;
+  max-width: 360px;
+}
+.pave__lettres[hidden] { display: none; }
+.touche-num, .touche-lettre {
+  font-family: "VT323", monospace;
+  font-size: clamp(18px, 5vw, 24px);
+  color: #2b2b2b;
+  background: linear-gradient(180deg, #efe7d2, var(--beige-touche) 60%, #b9ad90);
+  border: 1px solid #00000030;
+  border-radius: 7px;
+  padding: 8px 0;
+  cursor: pointer;
+  box-shadow: 0 1px 0 #fff8 inset, 0 2px 3px #0004;
+}
+.touche-num:active, .touche-lettre:active { transform: translateY(1px); }
+.touche-lettre[disabled] { opacity: .35; cursor: default; }
+.touche-num:focus-visible, .touche-lettre:focus-visible { outline: 3px solid #2b7bff; outline-offset: 2px; }
+
+.aide-clavier {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #4a4232;
+  text-align: center;
+  margin: 14px 6px 0;
+  line-height: 1.4;
+}
+
+/* ------------------------- Puzzle / Taquin ------------------------- */
+.taquin {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  width: min(70%, 320px);
+  margin: 6px auto;
+  aspect-ratio: 1 / 1;
+  background: #0c2a2a;
+  padding: 3px;
+}
+.taquin__case {
+  background-size: 300% 300%;
+  background-color: #001a1a;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  outline: 1px solid #023;
+}
+.taquin__case--vide { background-image: none !important; cursor: default; }
+.taquin__case:focus-visible { outline: 3px solid var(--jaune); }
+
+/* ------------------------- Accessibilité --------------------------- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ------------------------- Mouvement réduit ------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .crt-scanlines { animation: none; }
+  .curseur,
+  .ecran__demarrage-action { animation: none; }
+}
+
+/* ------------------------- Responsive mobile ----------------------- */
+@media (max-width: 480px) {
+  body { padding: 10px 6px 30px; }
+  .minitel { padding: 12px 12px 16px; border-radius: 16px; }
+  .touche { min-width: 56px; padding: 10px 6px; }
+}
