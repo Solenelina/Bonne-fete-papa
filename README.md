@@ -60,18 +60,22 @@ Dans le dossier **`images/`**, dépose tes photos nommées `photo1.jpg`,
 `photo2.jpg`, … (jusqu'à 30 ; `.jpg`, `.jpeg` ou `.png`). Le jeu les détecte
 tout seul et en pioche une au hasard. Détails dans `images/README.txt`.
 
-## 🌐 Mettre en ligne sur GitLab Pages
+## 🌐 Mettre en ligne sur GitHub Pages
 
-Le dépôt contient déjà un fichier **`.gitlab-ci.yml`**. Il suffit de :
+Le dépôt contient déjà un workflow **`.github/workflows/deploy.yml`** qui publie
+le site automatiquement. Il suffit de :
 
-1. Créer un projet sur GitLab et y pousser ce dossier :
+1. Créer un dépôt sur GitHub, puis y pousser ce dossier :
    ```bash
-   git remote add origin https://gitlab.com/<ton-compte>/3615-papa.git
+   git remote add origin https://github.com/<ton-compte>/3615-papa.git
+   git branch -M main
    git push -u origin main
    ```
-2. GitLab lance automatiquement le déploiement (menu **Build → Pipelines**).
-3. L'adresse publique apparaît dans **Deploy → Pages**
-   (du type `https://<ton-compte>.gitlab.io/3615-papa/`).
+2. Sur GitHub : **Settings → Pages → Build and deployment → Source : « GitHub Actions »**.
+3. À chaque `git push` sur `main`, l'onglet **Actions** déploie le site.
+   L'adresse publique s'affiche dans **Settings → Pages**
+   (du type `https://<ton-compte>.github.io/3615-papa/`).
+
 
 ## 🛠️ Détails techniques
 
