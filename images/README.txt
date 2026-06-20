@@ -1,9 +1,9 @@
-=== DOSSIER PHOTOS DU PUZZLE (3615 PAPA) ===
+=== DOSSIER PHOTOS SOUVENIR (3615 PAPA) ===
 
-Pour mettre VOS photos dans le jeu de puzzle (taquin) :
+Pour mettre VOS photos dans la rubrique « Photo souvenir » :
 
 1. Choisis des photos bien CARRÉES de préférence (sinon elles seront
-   un peu étirées). Une vue rapprochée de vous deux rend très bien.
+   un peu recadrées). Une vue rapprochée de vous deux rend très bien.
 
 2. Renomme-les simplement :
         photo1.jpg
@@ -14,10 +14,10 @@ Pour mettre VOS photos dans le jeu de puzzle (taquin) :
 
 3. Dépose-les dans CE dossier (images/).
 
-C'est tout ! Le jeu détecte automatiquement les photos présentes et en
-pioche une au hasard à chaque partie.
+C'est tout ! La rubrique détecte automatiquement les photos présentes et
+en pioche une au hasard à chaque fois.
 
 S'il n'y a aucune photo, le visuel d'exemple (exemple.svg) est utilisé,
-donc le jeu fonctionne quand même tout de suite.
+donc la rubrique fonctionne quand même tout de suite.
 
 (Réglages avancés possibles dans js/config.js)

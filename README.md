@@ -11,7 +11,7 @@ Le plus simple : **double-clique sur `index.html`**, il s'ouvre dans ton
 navigateur. Puis clique sur **« APPUYEZ POUR VOUS CONNECTER »** (le son du
 modem ne démarre qu'après ce clic, c'est une règle des navigateurs).
 
-> Astuce : pour que les **photos du puzzle** se chargent sans souci, mieux vaut
+> Astuce : pour que les **photos souvenir** se chargent sans souci, mieux vaut
 > lancer un petit serveur local plutôt que d'ouvrir le fichier directement :
 > ```bash
 > cd 3615-PAPA
@@ -25,23 +25,22 @@ modem ne démarre qu'après ce clic, c'est une règle des navigateurs).
   (ou la touche **Entrée**) pour entrer dans une rubrique.
 - Les **touches de fonction** en bas sont cliquables : Sommaire, Retour,
   Suite, Annulation, **Envoi** (en rouge).
-- Sur **téléphone**, un pavé tactile (chiffres, et lettres pour le Pendu)
-  apparaît sous l'écran. Tout est aussi jouable au **clavier** sur ordinateur
-  (flèches pour le puzzle, lettres pour le pendu, Entrée = Envoi, Échap =
-  Annulation, Origine/Home = Sommaire).
+- Sur **téléphone**, un pavé tactile (chiffres) apparaît sous l'écran.
+  Tout est aussi jouable au **clavier** sur ordinateur (Entrée = Envoi,
+  Échap = Annulation, Origine/Home = Sommaire).
 
-## 📺 Les 10 rubriques
+## 📺 Les 7 rubriques
 
-1. **Messagerie / Dédicaces** — petits mots pour papa
-2. **Quiz années 80** — mémoire des années fastes
-3. **Blagues de papa** — devinettes et jeux de mots
-4. **Horoscope du jour** — avec un clin d'œil aux signes Lion & Bélier
-5. **Petites annonces** — R5 Turbo, Walkman & co
-6. **Météo & Programmes TV** — bulletin et grille d'époque
-7. **Le Pendu** — jeu de lettres
-8. **Puzzle photo (taquin)** — reconstitue une photo de vous
-9. **C'était en 1988** — l'année de ses 18 ans
-10. **Le Juste Prix** — devine les prix… en francs
+Classées du moins personnel (culture générale) au plus personnel (la
+photo souvenir, en tout dernier) :
+
+1. **Quiz années 80** — mémoire des années fastes
+2. **C'était en 1988** — l'année de ses 18 ans
+3. **Le Juste Prix** — devine les prix… en francs
+4. **Petites annonces** — R5 Turbo, Walkman & co
+5. **Blagues de papa** — devinettes et jeux de mots (avec un peu d'humour noir glissé dedans)
+6. **Messagerie / Dédicaces** — petits mots pour papa
+7. **Photo souvenir** — un clic façon appareil photo d'époque, et la photo se développe lentement (avec une petite légende qui change chaque fois)
 
 ## ✏️ Personnaliser (très simple)
 
@@ -49,12 +48,11 @@ Tout est dans **`js/config.js`** :
 
 - `prenomPapa` — mets le prénom de ton papa (par défaut « PAPA »)
 - `surnom`, `messageAccueil` — petits mots d'accueil
-- `signePapa` / `signeEnfant` — pour les clins d'œil de l'horoscope
 
 Pour changer les blagues, dédicaces, questions du quiz, etc. : tout le texte
 est dans **`js/data.js`**, clairement séparé par rubrique.
 
-## 🖼️ Ajouter vos photos au puzzle
+## 🖼️ Ajouter vos photos souvenir
 
 Dans le dossier **`images/`**, dépose tes photos nommées `photo1.jpg`,
 `photo2.jpg`, … (jusqu'à 30 ; `.jpg`, `.jpeg` ou `.png`). Le jeu les détecte
