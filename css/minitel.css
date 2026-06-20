@@ -240,7 +240,7 @@ body {
 .touche--envoi { color: var(--rouge); font-weight: 800; }
 .touche:focus-visible { outline: 3px solid #2b7bff; outline-offset: 2px; }
 
-/* Pavé numérique + lettres */
+/* Pavé numérique */
 .pave { margin-top: 12px; }
 .pave__num {
   display: grid;
@@ -249,15 +249,7 @@ body {
   max-width: 280px;
   margin: 0 auto;
 }
-.pave__lettres {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  margin: 12px auto 0;
-  max-width: 360px;
-}
-.pave__lettres[hidden] { display: none; }
-.touche-num, .touche-lettre {
+.touche-num {
   font-family: "VT323", monospace;
   font-size: clamp(18px, 5vw, 24px);
   color: #2b2b2b;
@@ -268,9 +260,8 @@ body {
   cursor: pointer;
   box-shadow: 0 1px 0 #fff8 inset, 0 2px 3px #0004;
 }
-.touche-num:active, .touche-lettre:active { transform: translateY(1px); }
-.touche-lettre[disabled] { opacity: .35; cursor: default; }
-.touche-num:focus-visible, .touche-lettre:focus-visible { outline: 3px solid #2b7bff; outline-offset: 2px; }
+.touche-num:active { transform: translateY(1px); }
+.touche-num:focus-visible { outline: 3px solid #2b7bff; outline-offset: 2px; }
 
 .aide-clavier {
   font-family: Arial, Helvetica, sans-serif;
@@ -281,27 +272,39 @@ body {
   line-height: 1.4;
 }
 
-/* ------------------------- Puzzle / Taquin ------------------------- */
-.taquin {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3px;
-  width: min(70%, 320px);
-  margin: 6px auto;
-  aspect-ratio: 1 / 1;
-  background: #0c2a2a;
-  padding: 3px;
-}
-.taquin__case {
-  background-size: 300% 300%;
-  background-color: #001a1a;
-  border: 0;
+/* ------------------------- Photo souvenir --------------------------- */
+.polaroid {
+  position: relative;
+  width: min(70%, 280px);
+  margin: 8px auto;
+  background: #f4f0e6;
+  padding: 10px 10px 14px;
+  box-shadow: 0 8px 18px #0008;
   cursor: pointer;
-  padding: 0;
-  outline: 1px solid #023;
+  border: 0;
+  overflow: hidden;
 }
-.taquin__case--vide { background-image: none !important; cursor: default; }
-.taquin__case:focus-visible { outline: 3px solid var(--jaune); }
+.polaroid:focus-visible { outline: 3px solid var(--jaune); outline-offset: 2px; }
+.polaroid__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;      /* format carré, comme un instantané d'époque */
+  object-fit: cover;
+  background: #111;
+  filter: contrast(.45) brightness(2.4) blur(18px) grayscale(1);
+  transition: filter 4.2s cubic-bezier(.18,.7,.25,1);
+}
+.polaroid__img--nette { filter: none; }
+/* Petit flash blanc au moment du déclic */
+.polaroid__flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+.polaroid__flash--active { animation: flash-declic .7s ease-out forwards; }
+@keyframes flash-declic { 0% { opacity: .95; } 100% { opacity: 0; } }
 
 /* ------------------------- Accessibilité --------------------------- */
 .sr-only {
@@ -315,6 +318,8 @@ body {
   .crt-scanlines { animation: none; }
   .curseur,
   .ecran__demarrage-action { animation: none; }
+  .polaroid__img { transition: none; }
+  .polaroid__flash--active { animation: none; opacity: 0; }
 }
 
 /* ------------------------- Responsive mobile ----------------------- */

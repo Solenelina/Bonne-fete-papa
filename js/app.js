@@ -34,7 +34,6 @@
   const elStatut   = $("#barre-statut");
   const elDemarrage= $("#demarrage");
   const elPaveNum  = $("#pave-num");
-  const elPaveLet  = $("#pave-lettres");
 
   // On insère une "invite" (prompt) juste avant la saisie
   const elInvite = document.createElement("span");
@@ -45,7 +44,7 @@
   let pageCourante = null;     // objet page actif
   let pile = [];               // historique des id de pages (pour RETOUR)
   let saisie = "";             // ce que tape l'utilisateur
-  let photos = [CONFIG.photoExemple]; // photos disponibles pour le taquin
+  let photos = [CONFIG.photoExemple]; // photos disponibles pour la rubrique Photo souvenir
 
   /* ===================== RENDU DE L'ÉCRAN ========================== */
   function setTitre(t) { elTitre.textContent = t; }
@@ -88,35 +87,9 @@
     });
   }
 
-  // Construit le clavier de lettres (pour le Pendu)
-  function construirePaveLettres() {
-    const lettres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-    elPaveLet.innerHTML = "";
-    lettres.forEach((c) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "touche-lettre";
-      b.textContent = c;
-      b.dataset.lettre = c;
-      b.addEventListener("click", () => {
-        MinitelAudio.clic();
-        if (pageCourante && pageCourante.onTouche) pageCourante.onTouche(c);
-      });
-      elPaveLet.appendChild(b);
-    });
-  }
-
   // Active le bon clavier selon le type d'entrée attendu par la page
   function configurerClavier(accepte) {
-    if (accepte === "alpha") { elPaveNum.parentElement.style.display = ""; elPaveLet.hidden = false; elPaveNum.style.display = "none"; }
-    else if (accepte === "num") { elPaveNum.style.display = ""; elPaveLet.hidden = true; }
-    else { elPaveNum.style.display = ""; elPaveLet.hidden = true; }
-  }
-  function majLettresDispo(trouvees, fautes) {
-    [...elPaveLet.children].forEach((b) => {
-      const used = trouvees.has(b.dataset.lettre) || fautes.has(b.dataset.lettre);
-      b.disabled = used;
-    });
+    elPaveNum.style.display = "";
   }
 
   /* ===================== GESTION DE LA SAISIE ===================== */
@@ -173,17 +146,16 @@
   /* ===================== DÉFINITION DES PAGES ===================== */
 
   /* ---- SOMMAIRE ---- */
+  // Ordre du moins personnel (culture générale années 80) au plus
+  // personnel (la photo souvenir, en tout dernier).
   const MENU = [
-    ["1", "MESSAGERIE / DÉDICACES", "messagerie"],
-    ["2", "QUIZ ANNÉES 80",         "quiz"],
-    ["3", "BLAGUES DE PAPA",        "blagues"],
-    ["4", "HOROSCOPE DU JOUR",      "horoscope"],
-    ["5", "PETITES ANNONCES",       "annonces"],
-    ["6", "MÉTÉO & PROGRAMMES TV",  "meteo"],
-    ["7", "LE PENDU (jeu)",         "pendu"],
-    ["8", "PUZZLE PHOTO (taquin)",  "puzzle"],
-    ["9", "C'ÉTAIT EN 1988",        "annee1988"],
-    ["10","LE JUSTE PRIX",          "justeprix"]
+    ["1", "QUIZ ANNÉES 80",         "quiz"],
+    ["2", "C'ÉTAIT EN 1988",        "annee1988"],
+    ["3", "LE JUSTE PRIX",          "justeprix"],
+    ["4", "PETITES ANNONCES",       "annonces"],
+    ["5", "BLAGUES DE PAPA",        "blagues"],
+    ["6", "MESSAGERIE", "messagerie"],
+    ["7", "PHOTO SOUVENIR",         "photo"]
   ];
 
   PAGES.sommaire = {
@@ -193,7 +165,7 @@
     afficher() {
       const surnom = CONFIG.surnom ? ` (${esc(CONFIG.surnom)})` : "";
       let h = "";
-      h += L(`<span class="centre c-jaune">BONNE FÊTE ${esc(PRENOM)}${surnom} !</span>`);
+      h += L(`<span class="centre c-jaune">BONNE FÊTE PAPA !</span>`);
       h += L(`<span class="centre c-blanc">${esc(CONFIG.messageAccueil || "")}</span>`);
       h += VIDE;
       MENU.forEach(([n, t]) => {
@@ -215,28 +187,9 @@
     setTimeout(() => { if (pageCourante) setInvite(pageCourante.invite || ""); }, 1600);
   }
 
-  /* ---- 1. MESSAGERIE / DÉDICACES ---- */
-  PAGES.messagerie = {
-    titre: "1 ★ MESSAGERIE — DÉDICACES",
-    invite: "SUITE = message suivant",
-    accepte: "none",
-    _i: 0,
-    afficher() {
-      const d = DATA.dedicaces[this._i % DATA.dedicaces.length];
-      let h = VIDE + VIDE;
-      h += L(`<span class="centre c-cyan">▼ MESSAGE POUR ${esc(PRENOM)} ▼</span>`);
-      h += VIDE;
-      h += L(`<span class="centre c-jaune">${esc(d)}</span>`);
-      h += VIDE + VIDE;
-      h += L(`<span class="centre c-vert">[ ${(this._i % DATA.dedicaces.length) + 1} / ${DATA.dedicaces.length} ]</span>`);
-      rendre(h);
-    },
-    onSuite() { this._i++; this.afficher(); }
-  };
-
-  /* ---- 2. QUIZ ---- */
+  /* ---- 1. QUIZ ---- */
   PAGES.quiz = {
-    titre: "2 ★ QUIZ DES ANNÉES 80",
+    titre: "1 ★ QUIZ DES ANNÉES 80",
     accepte: "num",
     _i: 0, _score: 0, _phase: "question",
     afficher() {
@@ -256,7 +209,7 @@
       if (this._phase !== "question") return;
       const n = parseInt(s, 10);
       const q = DATA.quiz[this._i];
-      if (!(n >= 1 && n <= q.options.length)) { MinitelAudio.erreur(); flashStatut("Tapez 1, 2, 3 ou 4."); return; }
+      if (!(n >= 1 && n <= q.options.length)) { MinitelAudio.erreur(); flashStatut("Tape 1, 2, 3 ou 4."); return; }
       const bon = (n - 1) === q.bonne;
       if (bon) { this._score++; MinitelAudio.bip(1760); } else { MinitelAudio.erreur(); }
       this._phase = "reponse";
@@ -292,9 +245,86 @@
     }
   };
 
-  /* ---- 3. BLAGUES ---- */
+  /* ---- 2. C'ÉTAIT EN 1988 ---- */
+  PAGES.annee1988 = {
+    titre: "2 ★ C'ÉTAIT EN 1988",
+    invite: "SUITE = section suivante",
+    accepte: "none",
+    _i: 0,
+    afficher() { this._i = 0; this.dessiner(); },
+    dessiner() {
+      const sec = DATA.annee1988[this._i % DATA.annee1988.length];
+      let h = VIDE + L(`<span class="inv">${esc(sec.titre)}</span>`) + VIDE;
+      sec.lignes.forEach((l) => { h += L(`<span class="c-jaune">${esc(l)}</span>`); });
+      h += VIDE + L(`<span class="c-vert centre">[ ${(this._i % DATA.annee1988.length) + 1} / ${DATA.annee1988.length} ]</span>`);
+      rendre(h);
+    },
+    onSuite() { this._i++; this.dessiner(); }
+  };
+
+  /* ---- 3. LE JUSTE PRIX ---- */
+  PAGES.justeprix = {
+    titre: "3 ★ LE JUSTE PRIX (en francs)",
+    accepte: "num",
+    _i: 0, _essais: 0, _fini: false,
+    afficher() { this._i = 0; this.nouveau(); },
+    nouveau() {
+      this._essais = 0; this._fini = false;
+      this.invite = "Ton prix (francs) + ENVOI";
+      setInvite(this.invite);
+      const o = DATA.justeprix[this._i % DATA.justeprix.length];
+      let h = L(`<span class="c-cyan">Devine le prix d'époque :</span>`) + VIDE;
+      h += L(`<span class="c-jaune">${esc(o.objet)}</span>`) + VIDE;
+      h += L(`<span class="c-vert">Indice : ${esc(o.indice)}</span>`) + VIDE;
+      h += L(`<span class="c-blanc">Tape un montant en francs.</span>`);
+      rendre(h);
+    },
+    onEntree(s) {
+      if (this._fini) return;
+      const o = DATA.justeprix[this._i % DATA.justeprix.length];
+      const prop = parseInt(s, 10);
+      if (isNaN(prop)) { MinitelAudio.erreur(); flashStatut("Tape un nombre."); return; }
+      this._essais++;
+      let h = L(`<span class="c-jaune">${esc(o.objet)}</span>`) + VIDE;
+      h += L(`<span class="c-blanc">Ton prix : ${prop} F — essai ${this._essais}</span>`) + VIDE;
+      if (prop === o.prix) {
+        this._fini = true; MinitelAudio.bip(2000);
+        h += L(`<span class="c-vert">★ EXACT ! C'était bien ${o.prix} F. SUITE = objet suivant.</span>`);
+        this.invite = "SUITE = objet suivant"; setInvite(this.invite);
+      } else if (Math.abs(prop - o.prix) <= Math.max(2, o.prix * 0.1)) {
+        MinitelAudio.bip(1200);
+        h += L(`<span class="c-jaune">TOUT PRÈS ! ${prop < o.prix ? "C'est un peu PLUS." : "C'est un peu MOINS."}</span>`);
+      } else {
+        MinitelAudio.erreur();
+        h += L(`<span class="c-rouge">${prop < o.prix ? "C'est PLUS cher !" : "C'est MOINS cher !"}</span>`);
+      }
+      rendre(h);
+    },
+    onSuite() { if (this._fini) { this._i++; this.nouveau(); } }
+  };
+
+  /* ---- 4. PETITES ANNONCES ---- */
+  PAGES.annonces = {
+    titre: "4 ★ PETITES ANNONCES",
+    invite: "SUITE = annonces suivantes",
+    accepte: "none",
+    _p: 0, _parPage: 3,
+    afficher() { this._p = 0; this.page(); },
+    page() {
+      const tot = Math.ceil(DATA.annonces.length / this._parPage);
+      const deb = (this._p % tot) * this._parPage;
+      const lot = DATA.annonces.slice(deb, deb + this._parPage);
+      let h = L(`<span class="c-cyan">— RUBRIQUE BONNES AFFAIRES —</span>`) + VIDE;
+      lot.forEach((a) => { h += L(`<span class="c-jaune">▸</span> ${esc(a)}`) + VIDE; });
+      h += L(`<span class="c-vert centre">[ page ${(this._p % tot) + 1} / ${tot} ]</span>`);
+      rendre(h);
+    },
+    onSuite() { this._p++; this.page(); }
+  };
+
+  /* ---- 5. BLAGUES ---- */
   PAGES.blagues = {
-    titre: "3 ★ BLAGUES DE PAPA",
+    titre: "5 ★ BLAGUES DE PAPA",
     accepte: "none",
     _i: 0, _revele: false,
     afficher() {
@@ -312,7 +342,7 @@
         h += L(`<span class="c-vert">${esc(b.r)}</span>`) + VIDE;
         h += L(`<span class="c-cyan">😄 (SUITE pour une autre)</span>`);
       } else {
-        h += L(`<span class="c-vert">... appuyez sur SUITE ...</span>`);
+        h += L(`<span class="c-vert">... appuie sur SUITE ...</span>`);
       }
       rendre(h);
     },
@@ -323,279 +353,76 @@
     }
   };
 
-  /* ---- 4. HOROSCOPE ---- */
-  PAGES.horoscope = {
-    titre: "4 ★ HOROSCOPE DU JOUR",
-    accepte: "num",
-    _signes: Object.keys(DATA.horoscope),
-    _lecture: null,
-    afficher() { this._lecture = null; this.liste(); },
-    liste() {
-      this.invite = "Numéro du signe + ENVOI";
-      setInvite(this.invite);
-      let h = L(`<span class="c-cyan">Choisissez votre signe :</span>`) + VIDE;
-      this._signes.forEach((s, k) => {
-        const etoile = (s === CONFIG.signePapa || s === CONFIG.signeEnfant) ? " <span class=\"c-jaune\">★</span>" : "";
-        h += L(`<span class="menu-num">${String(k + 1).padStart(2,"0")}</span> <span class="menu-item">${esc(s)}</span>${etoile}`);
-      });
-      rendre(h);
-    },
-    onEntree(s) {
-      const n = parseInt(s, 10);
-      if (!(n >= 1 && n <= this._signes.length)) { MinitelAudio.erreur(); flashStatut("Numéro de 1 à 12."); return; }
-      this._lecture = this._signes[n - 1];
-      this.afficherSigne();
-    },
-    afficherSigne() {
-      const s = this._lecture;
-      this.invite = "RETOUR = liste des signes";
-      setInvite(this.invite);
-      let h = VIDE;
-      h += L(`<span class="inv">${esc(s.toUpperCase())}</span>`) + VIDE;
-      h += L(`<span class="c-jaune">${esc(DATA.horoscope[s])}</span>`);
-      if (s === CONFIG.signePapa) { h += VIDE + L(`<span class="c-vert">(Et oui : aujourd'hui, c'est TA journée. Bonne fête !)</span>`); }
-      rendre(h);
-    },
-    onRetour() { if (this._lecture) { this._lecture = null; this.liste(); return true; } return false; }
-  };
-
-  /* ---- 5. PETITES ANNONCES ---- */
-  PAGES.annonces = {
-    titre: "5 ★ PETITES ANNONCES",
-    invite: "SUITE = annonces suivantes",
+  /* ---- 6. MESSAGERIE ---- */
+  PAGES.messagerie = {
+    titre: "6 ★ MESSAGERIE",
+    invite: "SUITE = message suivant",
     accepte: "none",
-    _p: 0, _parPage: 3,
-    afficher() { this._p = 0; this.page(); },
-    page() {
-      const tot = Math.ceil(DATA.annonces.length / this._parPage);
-      const deb = (this._p % tot) * this._parPage;
-      const lot = DATA.annonces.slice(deb, deb + this._parPage);
-      let h = L(`<span class="c-cyan">— RUBRIQUE BONNES AFFAIRES —</span>`) + VIDE;
-      lot.forEach((a) => { h += L(`<span class="c-jaune">▸</span> ${esc(a)}`) + VIDE; });
-      h += L(`<span class="c-vert centre">[ page ${(this._p % tot) + 1} / ${tot} ]</span>`);
-      rendre(h);
-    },
-    onSuite() { this._p++; this.page(); }
-  };
-
-  /* ---- 6. MÉTÉO & TV ---- */
-  PAGES.meteo = {
-    titre: "6 ★ MÉTÉO & PROGRAMMES TV",
-    invite: "SUITE = bascule météo / TV",
-    accepte: "none",
-    _tv: false,
-    afficher() { this._tv = false; this.dessiner(); },
-    dessiner() {
-      const src = this._tv ? DATA.meteo.tv : DATA.meteo.bulletin;
-      let h = VIDE;
-      src.forEach((ligne, i) => {
-        const cls = i === 0 ? "inv" : (this._tv ? "c-cyan" : "c-jaune");
-        h += L(`<span class="${cls}">${esc(ligne)}</span>`);
-      });
-      h += VIDE + L(`<span class="c-vert">SUITE → ${this._tv ? "revenir à la météo" : "voir les programmes TV"}</span>`);
-      rendre(h);
-    },
-    onSuite() { this._tv = !this._tv; this.dessiner(); }
-  };
-
-  /* ---- 7. LE PENDU ---- */
-  PAGES.pendu = {
-    titre: "7 ★ LE PENDU",
-    invite: "Tapez une lettre",
-    accepte: "alpha",
-    _mot: "", _indice: "", _trouvees: null, _fautes: null, _max: 7, _fini: false,
+    _i: 0,
     afficher() {
-      const choix = DATA.penduMots[Math.floor(Math.random() * DATA.penduMots.length)];
-      this._mot = choix.mot.toUpperCase();
-      this._indice = choix.indice;
-      this._trouvees = new Set();
-      this._fautes = new Set();
-      this._fini = false;
-      this.dessiner();
-    },
-    proposer(c) {
-      if (this._fini) return;
-      c = c.toUpperCase();
-      if (!/^[A-Z]$/.test(c)) return;
-      if (this._trouvees.has(c) || this._fautes.has(c)) return;
-      if (this._mot.includes(c)) { this._trouvees.add(c); MinitelAudio.bip(1500); }
-      else { this._fautes.add(c); MinitelAudio.erreur(); }
-      this.dessiner();
-    },
-    onTouche(c) { this.proposer(c); },
-    masque() {
-      return this._mot.split("").map((l) => (l === " " ? " " : this._trouvees.has(l) ? l : "_")).join(" ");
-    },
-    gagne() { return this._mot.split("").every((l) => l === " " || this._trouvees.has(l)); },
-    dessiner() {
-      const fautes = this._fautes.size;
-      const gagne = this.gagne();
-      const perdu = fautes >= this._max;
-      this._fini = gagne || perdu;
-      majLettresDispo(this._trouvees, this._fautes);
-
-      let h = L(`<span class="c-cyan">Indice : ${esc(this._indice)}</span>`) + VIDE;
-      h += L(`<span class="c-jaune" style="letter-spacing:2px">${esc(this.masque())}</span>`) + VIDE;
-      h += L(`<span class="c-rouge">Erreurs : ${fautes}/${this._max}</span>`
-           + `  <span class="c-blanc">${[...this._fautes].join(" ")}</span>`);
-      h += dessinPotence(fautes);
-      if (gagne) { h += VIDE + L(`<span class="c-vert">★ GAGNÉ ! Bravo champion. SUITE = autre mot.</span>`); MinitelAudio.bip(2000); }
-      else if (perdu) { h += VIDE + L(`<span class="c-rouge">PENDU ! Le mot était : ${esc(this._mot)}. SUITE = rejouer.</span>`); }
-      else { setInvite("Tapez une lettre"); }
+      const d = DATA.dedicaces[this._i % DATA.dedicaces.length];
+      let h = VIDE + VIDE;
+      h += L(`<span class="centre c-cyan">▼ MESSAGE POUR ${esc(PRENOM)} ▼</span>`);
+      h += VIDE;
+      h += L(`<span class="centre c-jaune">${esc(d)}</span>`);
+      h += VIDE + VIDE;
+      h += L(`<span class="centre c-vert">[ ${(this._i % DATA.dedicaces.length) + 1} / ${DATA.dedicaces.length} ]</span>`);
       rendre(h);
     },
-    onSuite() { this.afficher(); }
+    onSuite() { this._i++; this.afficher(); }
   };
 
-  // Petite potence ASCII selon le nombre d'erreurs (0..7)
-  function dessinPotence(n) {
-    const etapes = [
-      ["  +---+", "  |   |", "      |", "      |", "      |", "========="],
-      ["  +---+", "  |   |", "  O   |", "      |", "      |", "========="],
-      ["  +---+", "  |   |", "  O   |", "  |   |", "      |", "========="],
-      ["  +---+", "  |   |", "  O   |", " /|   |", "      |", "========="],
-      ["  +---+", "  |   |", "  O   |", " /|\\  |", "      |", "========="],
-      ["  +---+", "  |   |", "  O   |", " /|\\  |", " /    |", "========="],
-      ["  +---+", "  |   |", "  O   |", " /|\\  |", " / \\  |", "========="],
-      ["  +---+", "  |   |", "  X   |", " /|\\  |", " / \\  |", "========="]
-    ];
-    const art = etapes[Math.min(n, 7)];
-    return VIDE + art.map((l) => L(`<span class="c-vert">${esc(l)}</span>`)).join("");
-  }
-
-  /* ---- 8. PUZZLE / TAQUIN ---- */
-  PAGES.puzzle = {
-    titre: "8 ★ PUZZLE PHOTO",
-    invite: "Cliquez/flèches pour glisser",
+  /* ---- 7. PHOTO SOUVENIR ---- */
+  PAGES.photo = {
+    titre: "7 ★ PHOTO SOUVENIR",
+    invite: "Clique sur la photo (ou ENVOI)",
     accepte: "none",
-    _ordre: [], _vide: 8, _image: "", _gagne: false,
+    _image: "", _idx: 0, _phase: "attente",   // attente -> developpement -> fini
     afficher() {
-      this._image = photos[Math.floor(Math.random() * photos.length)];
-      this._ordre = [0,1,2,3,4,5,6,7,8];
-      this._vide = 8; this._gagne = false;
-      this.melanger();
+      this._idx = Math.floor(Math.random() * photos.length);
+      this._image = photos[this._idx];
+      this._phase = "attente";
+      this.invite = "Clique sur la photo (ou ENVOI)";
       this.dessiner();
     },
-    voisins(i) {
-      const r = Math.floor(i / 3), c = i % 3, v = [];
-      if (r > 0) v.push(i - 3); if (r < 2) v.push(i + 3);
-      if (c > 0) v.push(i - 1); if (c < 2) v.push(i + 1);
-      return v;
-    },
-    melanger() {
-      // 80 mouvements valides aléatoires depuis l'état résolu => toujours soluble
-      for (let k = 0; k < 80; k++) {
-        const vois = this.voisins(this._vide);
-        const j = vois[Math.floor(Math.random() * vois.length)];
-        [this._ordre[this._vide], this._ordre[j]] = [this._ordre[j], this._ordre[this._vide]];
-        this._vide = j;
-      }
-    },
-    bouger(i) {
-      if (this._gagne) return;
-      if (!this.voisins(this._vide).includes(i)) return;
-      [this._ordre[this._vide], this._ordre[i]] = [this._ordre[i], this._ordre[this._vide]];
-      this._vide = i;
-      MinitelAudio.clic();
-      this.verifier();
-      this.dessiner();
-    },
-    // flèche : on fait glisser la case située dans la direction donnée
-    fleche(dir) {
-      const r = Math.floor(this._vide / 3), c = this._vide % 3;
-      let i = -1;
-      if (dir === "haut"   && r < 2) i = this._vide + 3;
-      if (dir === "bas"    && r > 0) i = this._vide - 3;
-      if (dir === "gauche" && c < 2) i = this._vide + 1;
-      if (dir === "droite" && c > 0) i = this._vide - 1;
-      if (i >= 0) this.bouger(i);
-    },
-    verifier() {
-      this._gagne = this._ordre.every((p, idx) => p === idx);
-      if (this._gagne) { MinitelAudio.bip(2000); setTimeout(() => MinitelAudio.bip(2400), 120); }
+    reveler() {
+      if (this._phase !== "attente") return;
+      this._phase = "developpement";
+      MinitelAudio.tone(140, 0, 0.05, { type: "square", gain: .08 });
+      MinitelAudio.tone(90, 0.06, 0.08, { type: "square", gain: .06 });
+      this.invite = "";
+      setInvite(this.invite);
+      const cadre = $("#photo-cadre");
+      cadre.querySelector("img").classList.add("polaroid__img--nette");
+      cadre.querySelector(".polaroid__flash").classList.add("polaroid__flash--active");
+      const statut = $("#photo-statut");
+      if (statut) statut.textContent = "Développement en cours...";
+      const duree = reduit ? 250 : 4200; // un vrai Polaroid d'époque prend son temps
+      setTimeout(() => {
+        if (pageCourante !== this) return; // on a changé de page pendant le développement
+        this._phase = "fini";
+        if (statut) statut.textContent = "★ photo développée ★";
+        this.invite = "SUITE = nouvelle photo";
+        setInvite(this.invite);
+        MinitelAudio.bip(1500);
+      }, duree);
     },
     dessiner() {
       const exemple = this._image === CONFIG.photoExemple;
-      let h = L(`<span class="c-cyan">Reconstituez la photo. SUITE = nouvelle photo.</span>`);
-      if (exemple) h += L(`<span class="c-vert">(Astuce : ajoutez vos photos dans le dossier images/)</span>`);
-      h += `<div class="taquin" id="taquin" role="group" aria-label="Puzzle taquin 3 sur 3">`;
-      this._ordre.forEach((piece, idx) => {
-        if (this._gagne || piece !== 8) {
-          // pièce visible : on positionne la tranche d'image
-          const showPiece = this._gagne ? idx : piece; // une fois gagné, image complète
-          const row = Math.floor(showPiece / 3), col = showPiece % 3;
-          h += `<button class="taquin__case" data-i="${idx}" aria-label="case ${idx + 1}" `
-             + `style="background-image:url('${this._image}');background-position:${col * 50}% ${row * 50}%"></button>`;
-        } else {
-          h += `<button class="taquin__case taquin__case--vide" data-i="${idx}" aria-label="case vide" tabindex="-1"></button>`;
-        }
-      });
-      h += `</div>`;
-      if (this._gagne) h += L(`<span class="centre c-jaune">★ BRAVO ! Photo reconstituée ! ★</span>`);
+      const legende = DATA.legendesPhoto[this._idx % DATA.legendesPhoto.length];
+      let h = L(`<span class="c-cyan">Un souvenir t'attend...</span>`);
+      if (exemple) h += L(`<span class="c-vert">(Astuce : ajoute tes photos dans le dossier images/)</span>`);
+      h += `<div class="polaroid" id="photo-cadre" role="button" tabindex="-1" aria-label="Prendre la photo">`
+         + `<img class="polaroid__img" src="${this._image}" alt="Photo souvenir">`
+         + `<span class="polaroid__flash" aria-hidden="true"></span>`
+         + `</div>`;
+      h += L(`<span class="centre c-jaune">${esc(legende)}</span>`);
+      h += L(`<span class="centre c-vert" id="photo-statut">(clique ou ENVOI pour prendre la photo)</span>`);
       rendre(h);
-      // branchement des clics
-      $("#taquin").querySelectorAll(".taquin__case").forEach((b) => {
-        b.addEventListener("click", () => this.bouger(parseInt(b.dataset.i, 10)));
-      });
-    }
-  };
-
-  /* ---- 9. C'ÉTAIT EN 1988 ---- */
-  PAGES.annee1988 = {
-    titre: "9 ★ C'ÉTAIT EN 1988",
-    invite: "SUITE = section suivante",
-    accepte: "none",
-    _i: 0,
-    afficher() { this._i = 0; this.dessiner(); },
-    dessiner() {
-      const sec = DATA.annee1988[this._i % DATA.annee1988.length];
-      let h = VIDE + L(`<span class="inv">${esc(sec.titre)}</span>`) + VIDE;
-      sec.lignes.forEach((l) => { h += L(`<span class="c-jaune">${esc(l)}</span>`); });
-      h += VIDE + L(`<span class="c-vert centre">[ ${(this._i % DATA.annee1988.length) + 1} / ${DATA.annee1988.length} ]</span>`);
-      rendre(h);
+      $("#photo-cadre").addEventListener("click", () => this.reveler());
     },
-    onSuite() { this._i++; this.dessiner(); }
-  };
-
-  /* ---- 10. LE JUSTE PRIX ---- */
-  PAGES.justeprix = {
-    titre: "10 ★ LE JUSTE PRIX (en francs)",
-    accepte: "num",
-    _i: 0, _essais: 0, _fini: false,
-    afficher() { this._i = 0; this.nouveau(); },
-    nouveau() {
-      this._essais = 0; this._fini = false;
-      this.invite = "Votre prix (francs) + ENVOI";
-      setInvite(this.invite);
-      const o = DATA.justeprix[this._i % DATA.justeprix.length];
-      let h = L(`<span class="c-cyan">Devinez le prix d'époque :</span>`) + VIDE;
-      h += L(`<span class="c-jaune">${esc(o.objet)}</span>`) + VIDE;
-      h += L(`<span class="c-vert">Indice : ${esc(o.indice)}</span>`) + VIDE;
-      h += L(`<span class="c-blanc">Tapez un montant en francs.</span>`);
-      rendre(h);
-    },
-    onEntree(s) {
-      if (this._fini) return;
-      const o = DATA.justeprix[this._i % DATA.justeprix.length];
-      const prop = parseInt(s, 10);
-      if (isNaN(prop)) { MinitelAudio.erreur(); flashStatut("Tapez un nombre."); return; }
-      this._essais++;
-      let h = L(`<span class="c-jaune">${esc(o.objet)}</span>`) + VIDE;
-      h += L(`<span class="c-blanc">Votre prix : ${prop} F — essai ${this._essais}</span>`) + VIDE;
-      if (prop === o.prix) {
-        this._fini = true; MinitelAudio.bip(2000);
-        h += L(`<span class="c-vert">★ EXACT ! C'était bien ${o.prix} F. SUITE = objet suivant.</span>`);
-        this.invite = "SUITE = objet suivant"; setInvite(this.invite);
-      } else if (Math.abs(prop - o.prix) <= Math.max(2, o.prix * 0.1)) {
-        MinitelAudio.bip(1200);
-        h += L(`<span class="c-jaune">TOUT PRÈS ! ${prop < o.prix ? "C'est un peu PLUS." : "C'est un peu MOINS."}</span>`);
-      } else {
-        MinitelAudio.erreur();
-        h += L(`<span class="c-rouge">${prop < o.prix ? "C'est PLUS cher !" : "C'est MOINS cher !"}</span>`);
-      }
-      rendre(h);
-    },
-    onSuite() { if (this._fini) { this._i++; this.nouveau(); } }
+    onEntree() { this.reveler(); },
+    onSuite() { if (this._phase === "fini") this.afficher(); else this.reveler(); }
   };
 
   /* ===================== CLAVIER PHYSIQUE =========================
@@ -603,11 +430,10 @@
        Entrée .............. Envoi
        Suppr (Delete) ...... Retour (page précédente)
        Échap ............... Sommaire (menu principal)
-       C ................... Annulation (efface la saisie, hors jeu du Pendu)
+       C ................... Annulation (efface la saisie)
        Effacement (Backspace) .. efface un caractère
        Page suiv. / + / → / ↓ .. Suite
-       Page préc. / ← / ↑ ...... Retour
-       (dans le Puzzle, les flèches font glisser les cases) */
+       Page préc. / ← / ↑ ...... Retour */
   document.addEventListener("keydown", (e) => {
     if (!pageCourante) return;           // pas avant la connexion
     const k = e.key;
@@ -623,19 +449,9 @@
     if (k === "Escape")     { e.preventDefault(); action("sommaire"); return; } // Échap → Sommaire
     if (k === "Home")       { e.preventDefault(); action("sommaire"); return; }
     if (k === "Backspace")  { e.preventDefault(); effacer(); return; }          // efface un caractère
+    if (k === "c" || k === "C") { e.preventDefault(); action("annulation"); return; }
 
-    // Annulation : touche « C » (comme le bouton C du pavé), sauf au Pendu
-    // où C est une lettre à proposer.
-    if ((k === "c" || k === "C") && acc !== "alpha") { e.preventDefault(); action("annulation"); return; }
-
-    // Flèches : utilisées par le taquin pour glisser les cases
-    if (pageCourante.id === "puzzle" && k.startsWith("Arrow")) {
-      e.preventDefault();
-      pageCourante.fleche({ ArrowUp: "haut", ArrowDown: "bas", ArrowLeft: "gauche", ArrowRight: "droite" }[k]);
-      return;
-    }
-
-    // Suite / Retour au clavier (hors taquin)
+    // Suite / Retour au clavier
     if (k === "PageDown" || k === "+" || k === "ArrowRight" || k === "ArrowDown") {
       e.preventDefault(); action("suite"); return;
     }
@@ -644,14 +460,20 @@
     }
 
     if (acc === "num" && /^[0-9]$/.test(k)) { ajouterCar(k); MinitelAudio.clic(); }
-    else if (acc === "alpha" && /^[a-zA-Z]$/.test(k)) {
-      if (pageCourante.onTouche) pageCourante.onTouche(k.toUpperCase());
-    }
   });
 
   // Touches de fonction (clic souris / tactile)
   document.querySelectorAll(".touche[data-action]").forEach((b) => {
     b.addEventListener("click", () => action(b.dataset.action));
+  });
+
+  // Après un clic sur une touche du clavier (fonction ou pavé numérique), on
+  // retire le focus du bouton. Sinon il reste "sélectionné" et un Entrée
+  // physique suivant ré-active CE bouton (comportement natif du <button>)
+  // au lieu de valider la saisie via Envoi : la rubrique paraît "bloquée".
+  $(".clavier").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b) b.blur();
   });
 
   /* ===================== DÉTECTION DES PHOTOS ===================== */
@@ -704,7 +526,6 @@
 
   /* ===================== INITIALISATION ========================== */
   construirePaveNum();
-  construirePaveLettres();
   detecterPhotos();
   elDemarrage.addEventListener("click", connecter);
 

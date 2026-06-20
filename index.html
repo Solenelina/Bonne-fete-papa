@@ -74,8 +74,6 @@
       <!-- Pavé numérique + lettres (surtout utile sur téléphone) -->
       <div class="pave" id="pave" role="group" aria-label="Pavé de saisie">
         <div class="pave__num" id="pave-num"></div>
-        <!-- Le clavier de lettres n'apparaît que pour le jeu du Pendu -->
-        <div class="pave__lettres" id="pave-lettres" hidden></div>
       </div>
     </div>
 
@@ -87,9 +85,11 @@
   </main>
 
   <!-- Scripts (vanilla JS, sans framework) -->
-  <script src="js/config.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
+  <!-- Le "?v=" change à chaque modif, pour éviter qu'un simple F5 réaffiche
+       une vieille version mise en cache par le navigateur (fichiers locaux). -->
+  <script src="js/config.js?v=4"></script>
+  <script src="js/audio.js?v=4"></script>
+  <script src="js/data.js?v=4"></script>
+  <script src="js/app.js?v=4"></script>
 </body>
 </html>
