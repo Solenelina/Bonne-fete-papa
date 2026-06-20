@@ -8,17 +8,13 @@
 
 const CONFIG = {
   /* Le prénom de papa (s'affiche un peu partout). Mets son prénom ici : */
-  prenomPapa: "PAPA",
+  prenomPapa: "Olivier",
 
   /* Surnom affectueux facultatif (laisse "" si aucun) */
-  surnom: "",
+  surnom: "Oliv",
 
   /* Petit mot d'accueil affiché sous le titre du Sommaire */
   messageAccueil: "Bonne fête des pères ! Ton terminal est connecté.",
-
-  /* Signes astro pour le clin d'œil de l'horoscope */
-  signePapa: "Lion",
-  signeEnfant: "Bélier",
 
   /* ------------------------------------------------------------------
      PHOTOS DU PUZZLE (taquin)
