@@ -12,3 +12,7 @@ node_modules/
 .idea/
 *.swp
 *~
+
+# Archives et dossiers de travail temporaires (non versionnés)
+*.zip
+ZZ_*/

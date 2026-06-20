@@ -22,6 +22,10 @@
 
   /* Réglages écran */
   --halo: 0 0 1px currentColor, 0 0 6px currentColor;
+
+  /* Hauteur réservée au boîtier hors écran (marque + clavier + aide +
+     marges). Sert à calculer une largeur qui tient dans la fenêtre. */
+  --reserve-verticale: 430px;
 }
 
 /* ------------------------- Base ------------------------------------ */
@@ -40,13 +44,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 12px 48px;
+  min-height: 100vh;
+  padding: 12px 12px 16px;
 }
 
 /* ------------------------- Le boîtier ------------------------------ */
 .minitel {
   width: 100%;
-  max-width: 640px;
+  /* La largeur est plafonnée par la HAUTEUR disponible : l'écran étant
+     en 4/3, on dérive la largeur max pour que tout le Minitel (écran +
+     clavier) tienne dans la fenêtre sans défilement, à zoom 100%. */
+  max-width: min(640px, calc((100vh - var(--reserve-verticale)) * 4 / 3 + 40px));
   background: linear-gradient(165deg, var(--beige-clair), var(--beige) 45%, var(--beige-fonce));
   border-radius: 22px 22px 28px 28px;
   padding: 18px 20px 22px;

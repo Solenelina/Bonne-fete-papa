@@ -598,22 +598,51 @@
     onSuite() { if (this._fini) { this._i++; this.nouveau(); } }
   };
 
-  /* ===================== CLAVIER PHYSIQUE ========================= */
+  /* ===================== CLAVIER PHYSIQUE =========================
+     Tout est pilotable au clavier, en complément des touches à l'écran :
+       Entrée .............. Envoi
+       Suppr (Delete) ...... Retour (page précédente)
+       Échap ............... Sommaire (menu principal)
+       C ................... Annulation (efface la saisie, hors jeu du Pendu)
+       Effacement (Backspace) .. efface un caractère
+       Page suiv. / + / → / ↓ .. Suite
+       Page préc. / ← / ↑ ...... Retour
+       (dans le Puzzle, les flèches font glisser les cases) */
   document.addEventListener("keydown", (e) => {
     if (!pageCourante) return;           // pas avant la connexion
     const k = e.key;
-    if (k === "Enter")      { e.preventDefault(); action("envoi"); return; }
-    if (k === "Backspace")  { e.preventDefault(); effacer(); return; }
-    if (k === "Escape")     { e.preventDefault(); action("annulation"); return; }
-    if (k === "Home")       { e.preventDefault(); action("sommaire"); return; }
-
     const acc = pageCourante.accepte || "num";
-    // Flèches : utilisées par le taquin
+
+    // Si le focus est déjà sur une touche du clavier, on laisse
+    // Entrée / Espace l'activer (évite une double action).
+    const surTouche = e.target && e.target.closest && e.target.closest(".clavier");
+    if (surTouche && (k === "Enter" || k === " ")) return;
+
+    if (k === "Enter")      { e.preventDefault(); action("envoi"); return; }
+    if (k === "Delete")     { e.preventDefault(); action("retour"); return; }   // Suppr → Retour
+    if (k === "Escape")     { e.preventDefault(); action("sommaire"); return; } // Échap → Sommaire
+    if (k === "Home")       { e.preventDefault(); action("sommaire"); return; }
+    if (k === "Backspace")  { e.preventDefault(); effacer(); return; }          // efface un caractère
+
+    // Annulation : touche « C » (comme le bouton C du pavé), sauf au Pendu
+    // où C est une lettre à proposer.
+    if ((k === "c" || k === "C") && acc !== "alpha") { e.preventDefault(); action("annulation"); return; }
+
+    // Flèches : utilisées par le taquin pour glisser les cases
     if (pageCourante.id === "puzzle" && k.startsWith("Arrow")) {
       e.preventDefault();
       pageCourante.fleche({ ArrowUp: "haut", ArrowDown: "bas", ArrowLeft: "gauche", ArrowRight: "droite" }[k]);
       return;
     }
+
+    // Suite / Retour au clavier (hors taquin)
+    if (k === "PageDown" || k === "+" || k === "ArrowRight" || k === "ArrowDown") {
+      e.preventDefault(); action("suite"); return;
+    }
+    if (k === "PageUp" || k === "ArrowLeft" || k === "ArrowUp") {
+      e.preventDefault(); action("retour"); return;
+    }
+
     if (acc === "num" && /^[0-9]$/.test(k)) { ajouterCar(k); MinitelAudio.clic(); }
     else if (acc === "alpha" && /^[a-zA-Z]$/.test(k)) {
       if (pageCourante.onTouche) pageCourante.onTouche(k.toUpperCase());
